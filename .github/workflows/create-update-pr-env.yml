@@ -1,0 +1,42 @@
+on:
+  pull_request_target:
+    types: [reopened, opened, synchronize, edited]
+
+name: build docker image and create PR env
+jobs:
+  create_or_update_pr_env:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-west-1
+      DOCKERHUB_REGISTRY: testricochet
+      DOCKERHUB_REPOSITORY: ricochet-frontend      
+      ECR_REPOSITORY: ricochet
+      URL-PUBLIC: a380c3be5e6284f4ca1dfc37a12b3033-851332533.eu-west-1.elb.amazonaws.com
+    steps:
+
+      - name: sanitize branch name
+        id: branch-name
+        run: |
+          echo "::set-output name=BRANCH::$(echo ${{ github.head_ref }} | sed -e "s/[[:punct:]]/-/g" | tr A-Z a-z | sed -e "s/--/-/g" | sed -e "s/-$//g")"
+      
+      - name: create a random value
+        id: random-value
+        run: |
+          echo "::set-output name=RANDOM::$(echo $RANDOM | md5sum | head -c 10; echo;)"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}} 
+      - name: Setup NodeJS 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      
+      - name: check dependencies
+        run: |
+          export NODE_OPTIONS="--max_old_space_size=4096"
+          yarn
+          yarn tsc
+          yarn build
