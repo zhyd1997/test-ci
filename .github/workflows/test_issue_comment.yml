@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo A comment on PR $NUMBER
+          echo A comment on PR $USER
+          echo $AUTHOR
         env:
-          NUMBER: ${{ github.event.comment.author }}
+          USER: ${{ github.event.comment.user }}
+          AUTHOR: ${{ github.event.comment.author_association }}
