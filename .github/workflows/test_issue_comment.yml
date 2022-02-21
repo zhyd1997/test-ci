@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo A comment on PR $COMMENT
+          echo A comment on PR $NUMBER
         env:
-          COMMENT: ${{ github.event.issue.body }}
+          NUMBER: ${{ github.event.issue.number }}
