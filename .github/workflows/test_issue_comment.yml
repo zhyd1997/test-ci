@@ -4,10 +4,10 @@ jobs:
   pr_commented:
     # This job only runs for pull request comments
     name: PR comment
-    if: ${{ github.event.issue.pull_request }}
+    if: ${{ github.event.issue.pull_request & github.event.comment.body === 'test bot' }}
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo A comment on PR $NUMBER
         env:
-          NUMBER: ${{ github.event.comment.body }}
+          NUMBER: ${{ github.event.comment.author }}
