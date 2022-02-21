@@ -32,6 +32,7 @@ jobs:
       - name: Get PR data
         id: pr
         run: |
+          mkdir pr-packages
           ls -R pr-packages
           pr_number=$(ls pr-packages)
           n_packages=$(ls pr-packages/$pr_number | wc -l)
